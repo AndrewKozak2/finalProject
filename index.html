@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>TrueScale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+        <h1>Welcome to TrueScale</h1>
+        <div class="js-cart-btn">
+            🛒 </div>
+
+
+    <div class="container">
+        <div class="sidebar">
+            <h2>Filters</h2>
+            <label for="brandFilter">Brand:</label>
+            <select id="brandFilter">
+                <option value="">All</option>
+                <option value="MiniGT">MiniGT</option>
+                <option value="INNO64">INNO64</option>
+                <option value="Tarmac Works">Tarmac Works</option>
+            </select>
+            <label for="scaleFilter">Scale:</label>
+            <select id="scaleFilter">
+                <option value="">All</option>
+                <option value="1/64">1/64</option>
+            </select>
+            <label for="priceFilter">Price:</label>
+            <input type="range" id="priceFilter" min="1" max="100" value="100">
+            <p id="priceValue">100$</p>
+        </div>
+        <div class="main-content">
+            
+    <div id="models-container"></div>
+    </div>
+    </div>
+    <script src="js/app.js"></script>
+    <script src="js/cartPopup.js"></script>
+    <script src="js/filter.js"></script>
+    <script src="js/filter-price.js"></script>
+</body>
+</html>

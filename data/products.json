@@ -1,0 +1,34 @@
+[
+    {
+      "id": 1,
+      "brand": "MiniGT",
+      "name": "Porsche 911 GT2 RS",
+      "scale": "1/64",
+      "price": 30,
+      "image": "images/gt2rs.png"
+    },
+    {
+      "id": 2,
+      "brand": "MiniGT",
+      "name": "Lamborghini Huracan EVO",
+      "scale": "1/64",
+      "price": 25,
+      "image": "images/huracanEvo.png"
+    },
+    {
+      "id": 3,
+      "brand": "INNO64",
+      "name": "Ferrari F40",
+      "scale": "1/64",
+      "price": 30,
+      "image": "images/f40.png"
+    },
+    {
+      "id": 4,
+      "brand": "Tarmac Works",
+      "name": "Ferrari 458 Italia GT3",
+      "scale": "1/64",
+      "price": 40,
+      "image": "images/ferrari458.png"   
+    }
+  ]
