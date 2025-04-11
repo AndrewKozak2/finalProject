@@ -1,39 +1,42 @@
-const priceSlider = document.getElementById('priceFilter');
+
+const brandFilter = document.getElementById('brandFilter');
+const scaleFilter = document.getElementById('scaleFilter');
+const priceFilter = document.getElementById('priceFilter');
 const priceValue = document.getElementById('priceValue');
 const modelsContainer = document.getElementById('models-container');
 
-let products = [];  
+let carModels = [];
 
-priceSlider.addEventListener('input', function() {
-    priceValue.textContent = priceSlider.value + '$';
-    
-    const maxPrice = priceSlider.value;
-    const filteredProducts = products.filter(product => product.price <= maxPrice);
-    renderProducts(filteredProducts);
-});
-
-function renderProducts(filteredProducts) {
-    modelsContainer.innerHTML = ''; 
-    
-    filteredProducts.forEach(product => {
-        const productElement = document.createElement('div');
-        productElement.classList.add('product');
-
-        productElement.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" style="width: 100px; height: 100px;">
-            <h3>${product.name}</h3>
-            <p>Brand: ${product.brand}</p>
-            <p>Scale: ${product.scale}</p>
-            <p>Price: $${product.price}</p>
-        `;
-
-        modelsContainer.appendChild(productElement);
-    });
+function loadCarModels() {
+    fetch('data/products.json')
+        .then(response => response.json())
+        .then(data => {
+            carModels = data.map(model => new CarModel(model.id, model.brand, model.name, model.scale, model.price, model.image));
+            renderCarModels(carModels); 
+        })
+        .catch(error => console.error('Помилка завантаження даних:', error));
 }
-fetch('data/products.json')
-    .then(response => response.json())
-    .then(data => {
-        products = data; 
-        renderProducts(products); 
-    })
-    .catch(error => console.error('Error loading products:', error));
+
+function updateFilteredModels() {
+    const selectedBrand = brandFilter.value;
+    const selectedScale = scaleFilter.value;
+    const selectedPrice = priceFilter.value;
+
+    const filteredModels = carModels.filter(model => {
+        const matchesBrand = selectedBrand ? model.brand === selectedBrand : true;
+        const matchesScale = selectedScale ? model.scale === selectedScale : true;
+        const matchesPrice = model.price <= selectedPrice;
+
+        return matchesBrand && matchesScale && matchesPrice;
+    });
+
+    renderCarModels(filteredModels);
+}
+
+brandFilter.addEventListener('change', updateFilteredModels);
+scaleFilter.addEventListener('change', updateFilteredModels);
+priceFilter.addEventListener('input', function () {
+    priceValue.textContent = `${priceFilter.value}$`;
+    updateFilteredModels();
+});
+loadCarModels();

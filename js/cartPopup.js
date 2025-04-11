@@ -1,4 +1,3 @@
-
 const cartButton = document.querySelector('.js-cart-btn');
 const cartSidebar = document.createElement('div');
 
@@ -7,13 +6,14 @@ cartSidebar.style.top = '0';
 cartSidebar.style.right = '-400px';
 cartSidebar.style.width = '400px';
 cartSidebar.style.height = '100vh';
-cartSidebar.style.backgroundColor = '#f4f4f4';
-cartSidebar.style.boxShadow = '-2px 0 10px rgba(0,0,0,0.2)';
+cartSidebar.style.backgroundColor = '#fff';
+cartSidebar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
 cartSidebar.style.padding = '20px';
 cartSidebar.style.overflowY = 'auto';
-cartSidebar.style.transition = 'right 0.3s ease';
+cartSidebar.style.transition = 'right 0.3s ease-in-out, opacity 0.3s ease-in-out';
 cartSidebar.style.fontFamily = 'Arial, sans-serif';
 cartSidebar.style.color = '#333';
+cartSidebar.style.borderRadius = '10px';
 document.body.appendChild(cartSidebar);
 
 const closeButton = document.createElement('button');
@@ -72,23 +72,22 @@ function renderCart() {
     cart.forEach(item => {
         total += item.quantity * item.price;
         cartSidebar.innerHTML += `
-            <div style='display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px;'>
+            <div style='display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px; border-radius: 8px; background-color: #fafafa; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);'>
                 <img src='${item.image}' alt='${item.name}' style='width: 60px; height: 60px; object-fit: cover; margin-right: 10px; border-radius: 8px;'>
                 <div style='flex: 1;'>
                     <h4 style='margin: 0; font-size: 18px;'>${item.name}</h4>
                     <p style='margin: 5px 0; color: #555;'>Бренд: ${item.brand}</p>
                     <p style='margin: 5px 0; color: #555;'>Масштаб: ${item.scale}</p>
                     <p style='margin: 5px 0; font-weight: bold;'>Ціна: $${item.price}</p>
-                    <input type='number' min='1' value='${item.quantity}' style='width: 50px; padding: 5px; margin-top: 5px;' onchange='updateQuantity(${item.id}, this.value)' />
-                    <button onclick='removeFromCart(${item.id})' style='margin-left: 10px; background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px;'>Видалити</button>
+                    <input type='number' min='1' value='${item.quantity}' style='width: 50px; padding: 5px; margin-top: 5px; border-radius: 5px; border: 1px solid #ddd;' onchange='updateQuantity(${item.id}, this.value)' />
+                    <button onclick='removeFromCart(${item.id})' style='margin-left: 10px; background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; transition: background-color 0.2s;'>Видалити</button>
                 </div>
             </div>
         `;
     });
 
-    cartSidebar.innerHTML += `<h3 style='text-align: center; margin-top: 20px;'>Загальна ціна: $${total}</h3>`;
+    cartSidebar.innerHTML += `<h3 style='text-align: center; margin-top: 20px;'>Загальна сума: $${total}</h3>`;
 
-   
     const orderButton = document.createElement('button');
     orderButton.textContent = 'Замовити';
     orderButton.style.marginTop = '20px';
@@ -100,8 +99,8 @@ function renderCart() {
     orderButton.style.borderRadius = '5px';
     orderButton.addEventListener('click', function () {
         alert('Ваше замовлення прийнято!');
-        cart = []; 
-        renderCart(); 
+        cart = [];
+        renderCart();
     });
 
     cartSidebar.appendChild(orderButton);
