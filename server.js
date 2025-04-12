@@ -7,26 +7,22 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const User = require('./models/User');
-const Product = require('./models/Product'); // ✅ Додано
+const Product = require('./models/Product'); 
 
 const app = express();
 const port = 5000;
 
 dotenv.config();
 
-// Підключення до MongoDB
 mongoose.connect('mongodb://localhost:27017/myshop', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error: ', err));
 
-// Мідлвари
 app.use(bodyParser.json());
 app.use(cors());
 
-// Налаштовуємо Express на обробку статичних файлів з папки 'js'
 app.use('/js', express.static(path.join(__dirname, 'js')));
 
-// 📦 Отримати всі товари
 app.get('/api/products', async (req, res) => {
   try {
     const products = await Product.find();
@@ -36,7 +32,6 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
-// ➕ Додати новий товар (для адміністратора)
 app.post('/api/products', async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -47,7 +42,6 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-// Маршрут для реєстрації користувача
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
@@ -63,7 +57,6 @@ app.post('/register', async (req, res) => {
   res.status(201).json({ message: 'User registered successfully' });
 });
 
-// Маршрут для входу
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -86,17 +79,14 @@ app.post('/login', async (req, res) => {
   res.json({ token });
 });
 
-// Маршрут за замовчуванням для доступу до головної сторінки
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Обробка невідомих запитів
 app.use((req, res) => {
   res.status(404).send('Not Found');
 });
 
-// Запуск сервера
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
