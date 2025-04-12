@@ -7,6 +7,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const User = require('./models/User');
+const Product = require('./models/Product'); // ✅ Додано
 
 const app = express();
 const port = 5000;
@@ -25,20 +26,37 @@ app.use(cors());
 // Налаштовуємо Express на обробку статичних файлів з папки 'js'
 app.use('/js', express.static(path.join(__dirname, 'js')));
 
+// 📦 Отримати всі товари
+app.get('/api/products', async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: 'Помилка при отриманні товарів' });
+  }
+});
+
+// ➕ Додати новий товар (для адміністратора)
+app.post('/api/products', async (req, res) => {
+  try {
+    const product = new Product(req.body);
+    await product.save();
+    res.status(201).json({ message: 'Товар створено' });
+  } catch (err) {
+    res.status(500).json({ message: 'Помилка при створенні товару' });
+  }
+});
+
 // Маршрут для реєстрації користувача
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
-  // Перевірка наявності користувача
   const existingUser = await User.findOne({ username });
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  // Хешування пароля
   const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Створення нового користувача
   const newUser = new User({ username, password: hashedPassword });
   await newUser.save();
 
@@ -49,20 +67,21 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  // Знайти користувача в базі
   const user = await User.findOne({ username });
   if (!user) {
     return res.status(400).json({ message: 'User not found' });
   }
 
-  // Перевірка пароля
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return res.status(400).json({ message: 'Invalid password' });
   }
 
-  // Створення JWT токену
-  const token = jwt.sign({ userId: user._id, username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
+  const token = jwt.sign(
+    { userId: user._id, username: user.username },
+    process.env.SECRET_KEY,
+    { expiresIn: '1h' }
+  );
 
   res.json({ token });
 });
