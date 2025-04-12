@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const User = require('./models/User'); // Імпорт моделі User
+const User = require('./models/User');
 
 const app = express();
 const port = 5000;
@@ -21,7 +21,9 @@ mongoose.connect('mongodb://localhost:27017/myshop', { useNewUrlParser: true, us
 // Мідлвари
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname)));
+
+// Налаштовуємо Express на обробку статичних файлів з папки 'js'
+app.use('/js', express.static(path.join(__dirname, 'js')));
 
 // Маршрут для реєстрації користувача
 app.post('/register', async (req, res) => {
@@ -60,9 +62,19 @@ app.post('/login', async (req, res) => {
   }
 
   // Створення JWT токену
-  const token = jwt.sign({ username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
+  const token = jwt.sign({ userId: user._id, username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
   res.json({ token });
+});
+
+// Маршрут за замовчуванням для доступу до головної сторінки
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Обробка невідомих запитів
+app.use((req, res) => {
+  res.status(404).send('Not Found');
 });
 
 // Запуск сервера
