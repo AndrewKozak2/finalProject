@@ -7,29 +7,30 @@ const User = require('./models/User');
 const Product = require('./models/Product');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const productRoutes = require('./routes/products');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: 'http://127.0.0.1:8080',
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use('/api', productRoutes);
 console.log('Registering auth routes...');
-app.use('/api', authRoutes); 
+app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Підключення до MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/myshop', {
-});
+mongoose.connect(process.env.MONGO_URI, {})
+  .then(() => {
+    console.log('Connected to MongoDB');
+    createAdminUser();
+  })
+  .catch(err => console.error('MongoDB connection error:', err));
 
-// Перевірка з'єднання
-mongoose.connection.on('connected', () => {
-  console.log(' Connected to MongoDB');
-  createAdminUser(); // ⬅️ Створюємо admin після з'єднання
-});
-
-// Функція створення admin-користувача, якщо його ще немає
 async function createAdminUser() {
   try {
     const existingAdmin = await User.findOne({ username: 'admin' });
@@ -42,15 +43,15 @@ async function createAdminUser() {
         role: 'admin',
       });
       await adminUser.save();
-      console.log(' Admin user created');
+      console.log('Admin user created');
     } else {
-      console.log(' Admin user already exists');
+      console.log('Admin user already exists');
     }
   } catch (error) {
     console.error('Error creating admin user:', error);
   }
 }
-// отримання списку товарів
+
 app.get('/api/products', async (req, res) => {
   try {
     const products = await Product.find();
@@ -61,5 +62,5 @@ app.get('/api/products', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(` Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -3,29 +3,25 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+require('dotenv').config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
 
-// 📌 Реєстрація
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Перевірка на заповненість
     if (!username || !email || !password) {
       return res.status(400).json({ message: 'Будь ласка, заповніть усі поля' });
     }
 
-    // Перевірка чи користувач існує
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Користувач з такою поштою вже існує' });
     }
 
-    // Хешування пароля
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Створення користувача
     const newUser = new User({
       username,
       email,
@@ -41,7 +37,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// 📌 Логін
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;

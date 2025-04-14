@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const role = payload.role;
 
+      
         if (role === 'admin') {
             const addProductButton = document.createElement('button');
             addProductButton.textContent = 'Add Product';
@@ -34,8 +35,11 @@ document.addEventListener('DOMContentLoaded', function () {
             rightContainer.appendChild(addProductButton);
 
             addProductButton.addEventListener('click', function () {
-                // Тут буде форма (зробимо далі)
-                alert('Форма додавання товару буде тут');
+                if (typeof window.showAddProductForm === 'function') {
+                    window.showAddProductForm(); // Викликає функцію з app.js
+                } else {
+                    console.warn('Форма ще не завантажена');
+                }
             });
         }
 
@@ -53,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         logoutButton.addEventListener('click', function () {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
+            localStorage.removeItem('role');
             window.location.href = '/';
         });
     } else {

@@ -19,15 +19,15 @@ const priceValue = document.getElementById('priceValue');
 const modelsContainer = document.getElementById('models-container');
 
 function loadCarModels() {
-    fetch('data/products.json')
+    fetch('http://localhost:3000/api/products')
         .then(response => response.json())
         .then(data => {
-            carModels = data.map(model =>
-                new CarModel(model.id, model.brand, model.name, model.scale, model.price, model.image)
+            carModels = data.products.map(model =>
+                new CarModel(model._id, model.brand, model.name, model.scale, model.price, model.image)
             );
-            renderCarModels(carModels);  
+            renderCarModels(carModels);
         })
-        .catch(error => console.error('Error loading the product data:', error)); 
+        .catch(error => console.error('Error loading product data:', error));
 }
 
 function renderCarModels(models) {
@@ -43,7 +43,7 @@ function renderCarModels(models) {
             <h3>${model.brand} ${model.name}</h3>
             <p>Scale: ${model.scale}</p>
             <p>Price: $${model.price}</p>
-            <button onclick="addToCart(${model.id})">Add to Cart</button>
+            <button onclick="addToCart('${model.id}')">Add to Cart</button>
         `;
 
         container.appendChild(card);
@@ -55,22 +55,18 @@ function filterCarModels(brand, scale, price) {
         const matchesBrand = brand ? model.brand === brand : true;
         const matchesScale = scale ? model.scale === scale : true;
         const matchesPrice = model.price <= price;
-
         return matchesBrand && matchesScale && matchesPrice;
     });
 }
 
 brandFilter.addEventListener('change', updateFilteredModels);
 scaleFilter.addEventListener('change', updateFilteredModels);
-priceFilter.addEventListener('input', function () {
-    updateFilteredModels();
-});
+priceFilter.addEventListener('input', updateFilteredModels);
 
 function updateFilteredModels() {
     const selectedBrand = brandFilter.value;
     const selectedScale = scaleFilter.value;
     const selectedPrice = priceFilter.value;
-
     priceValue.textContent = `${selectedPrice}$`;
 
     const filteredModels = filterCarModels(selectedBrand, selectedScale, selectedPrice);
@@ -86,7 +82,6 @@ function addToCart(id) {
         } else {
             cart.push({ ...product, quantity: 1 });
         }
-        console.log('Товари в корзині:', cart);
         saveCart();
         renderCart();
     }
@@ -98,14 +93,14 @@ function renderCart() {
 
     let total = 0;
     if (cart.length === 0) {
-        cartSidebar.innerHTML += '<p style="text-align: center; font-size: 18px; margin-top: 20px;">Корзина пуста</p>';
+        cartSidebar.innerHTML += '<p style="text-align: center;">Корзина пуста</p>';
     } else {
         cart.forEach(item => {
-            total = total + item.quantity * item.price;
+            total += item.quantity * item.price;
             cartSidebar.innerHTML += `
-                <div style='display: flex; align-items: center; margin-bottom: 15px;'>
-                    <img src='${item.image}' alt='${item.name}' style='width: 60px; height: 60px; margin-right: 10px;'>
-                    <div style='flex: 1;'>
+                <div style="display: flex; margin-bottom: 15px;">
+                    <img src="${item.image}" style="width: 60px; margin-right: 10px;">
+                    <div>
                         <h4>${item.name}</h4>
                         <p>Бренд: ${item.brand}</p>
                         <p>Масштаб: ${item.scale}</p>
@@ -115,7 +110,6 @@ function renderCart() {
                 </div>
             `;
         });
-
         cartSidebar.innerHTML += `<h3>Загальна сума: $${total}</h3>`;
     }
 }
@@ -123,89 +117,122 @@ function renderCart() {
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
-
 function loadCart() {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-        cart = JSON.parse(savedCart);
+    const saved = localStorage.getItem('cart');
+    if (saved) {
+        cart = JSON.parse(saved);
         renderCart();
     }
 }
-
 function clearCart() {
     cart = [];
     saveCart();
     renderCart();
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     const clearCartButton = document.getElementById('clear-cart');
     if (clearCartButton) {
         clearCartButton.addEventListener('click', clearCart);
     }
 
-    // ⬇️ Перевірка користувача
-    const userData = JSON.parse(localStorage.getItem('user'));
-    if (userData && userData.username === 'admin') {
-        const addProductBtn = document.createElement('button');
-        addProductBtn.id = 'add-product-btn';
-        addProductBtn.textContent = 'Add Product';
-        addProductBtn.style.margin = '10px';
-        addProductBtn.style.padding = '10px 20px';
-        addProductBtn.style.fontSize = '16px';
+    // 🔶 Створення модального вікна для додавання продукту
+    const modal = document.createElement('div');
+    modal.id = 'productModal';
+    modal.style.display = 'none';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '9999';
 
-        document.body.insertBefore(addProductBtn, document.body.firstChild);
+    const content = document.createElement('div');
+    content.style.backgroundColor = '#fff';
+    content.style.padding = '30px';
+    content.style.borderRadius = '12px';
+    content.style.width = '400px';
+    content.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+    content.innerHTML = `
+        <h2 style="text-align:center;">Додати товар</h2>
+        <form id="add-product-form">
+            <input id="brandInput" placeholder="Бренд" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
+            <input id="nameInput" placeholder="Назва моделі" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
+            <input id="scaleInput" placeholder="Масштаб (1/64)" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
+            <input type="number" id="priceInput" placeholder="Ціна" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
+            <input type="file" id="imageInput" accept="image/*" style="margin: 5px 0;"><br>
+            <img id="preview" src="" style="display:none; width: 100%; margin-top: 10px;"><br>
+            <button type="submit" style="margin-top: 10px; padding: 10px 20px; background:#007bff; color:white; border:none; border-radius:5px;">Зберегти</button>
+        </form>
+    `;
 
-        // Форма (прихована спочатку)
-        const form = document.createElement('form');
-        form.id = 'add-product-form';
-        form.style.display = 'none';
-        form.innerHTML = `
-            <h2>Додати новий товар</h2>
-            <input type="text" id="brandInput" placeholder="Бренд" required><br>
-            <input type="text" id="nameInput" placeholder="Назва моделі" required><br>
-            <input type="text" id="scaleInput" placeholder="Масштаб (наприклад, 1/64)" required><br>
-            <input type="number" id="priceInput" placeholder="Ціна" required><br>
-            <input type="text" id="imageInput" placeholder="URL зображення" required><br>
-            <button type="submit">Зберегти товар</button>
-        `;
-        document.body.insertBefore(form, addProductBtn.nextSibling);
+    modal.appendChild(content);
+    document.body.appendChild(modal);
 
-        // Показати/приховати форму
-        addProductBtn.addEventListener('click', function () {
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        });
+    // 🖼 Прев'ю картинки
+    let base64Image = '';
+    const imageInput = content.querySelector('#imageInput');
+    const preview = content.querySelector('#preview');
 
-        // Обробка сабміту форми
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const newProduct = {
-                id: Date.now(),
-                brand: document.getElementById('brandInput').value,
-                name: document.getElementById('nameInput').value,
-                scale: document.getElementById('scaleInput').value,
-                price: Number(document.getElementById('priceInput').value),
-                image: document.getElementById('imageInput').value
+    imageInput.addEventListener('change', function () {
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                base64Image = reader.result;
+                preview.src = base64Image;
+                preview.style.display = 'block';
             };
+            reader.readAsDataURL(file);
+        }
+    });
 
-            // Для перевірки:
-            console.log('Новий товар:', newProduct);
+    // 📤 Надсилання форми
+    const form = content.querySelector('#add-product-form');
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
 
-            // Можна додати в базу через API
-            // А поки просто додамо в масив та перемалюємо
-            carModels.push(new CarModel(
-                newProduct.id,
-                newProduct.brand,
-                newProduct.name,
-                newProduct.scale,
-                newProduct.price,
-                newProduct.image
-            ));
-            renderCarModels(carModels);
-            form.reset();
-            form.style.display = 'none';
-        });
-    }
+        const productData = {
+            brand: document.getElementById('brandInput').value,
+            name: document.getElementById('nameInput').value,
+            scale: document.getElementById('scaleInput').value,
+            price: Number(document.getElementById('priceInput').value),
+            image: base64Image
+        };
+
+        try {
+            const response = await fetch('http://localhost:3000/api/admin/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  },
+                body: JSON.stringify(productData)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert('Товар додано!');
+                form.reset();
+                preview.style.display = 'none';
+                modal.style.display = 'none';
+                loadCarModels();
+            } else {
+                alert(result.message || 'Помилка додавання товару');
+            }
+        } catch (err) {
+            console.error('Помилка:', err);
+        }
+    });
+
+    // 📌 Глобальна функція — активується з header.js
+    window.showAddProductForm = function () {
+        modal.style.display = 'flex';
+    };
 
     loadCarModels();
     loadCart();

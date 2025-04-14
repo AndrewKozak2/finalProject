@@ -9,9 +9,9 @@ const connectDB = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
-        console.log('✅ MongoDB підключено');
+        console.log(' MongoDB підключено');
     } catch (err) {
-        console.error('❌ Помилка MongoDB:', err.message);
+        console.error(' Помилка MongoDB:', err.message);
         process.exit(1);
     }
 };

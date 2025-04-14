@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('load', function () {
     const loginContainer = document.createElement('div');
     loginContainer.style.width = '400px';
     loginContainer.style.margin = '0 auto';
