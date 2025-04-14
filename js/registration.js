@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/register', {
+            const response = await fetch('http://localhost:3000/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -166,9 +166,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 messageContainer.textContent = 'Реєстрація успішна!';
                 messageContainer.style.color = 'green';
-                localStorage.setItem('username', username); // Зберігаємо ім'я користувача в localStorage
+                localStorage.setItem('username', username); 
                 setTimeout(function() {
-                    window.location.href = '/login.html'; // Перехід на сторінку входу
+                    window.location.href = '/login.html'; 
                 }, 2000);
             } else {
                 messageContainer.textContent = data.message || 'Помилка реєстрації';

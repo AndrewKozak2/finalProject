@@ -1,4 +1,3 @@
-// Клас для моделі машин
 class CarModel {
     constructor(id, brand, name, scale, price, image) {
         this.id = id;
@@ -10,20 +9,15 @@ class CarModel {
     }
 }
 
-// Масив для зберігання товарів у кошику
 let cart = [];
-
-// Масив моделей машин
 let carModels = [];
 
-// Отримуємо елементи фільтрів
 const brandFilter = document.getElementById('brandFilter');
 const scaleFilter = document.getElementById('scaleFilter');
 const priceFilter = document.getElementById('priceFilter');
-const priceValue = document.getElementById('priceValue'); // елемент для показу значення ціни
+const priceValue = document.getElementById('priceValue');
 const modelsContainer = document.getElementById('models-container');
 
-// Функція для завантаження моделей машин
 function loadCarModels() {
     fetch('data/products.json')
         .then(response => response.json())
@@ -36,10 +30,9 @@ function loadCarModels() {
         .catch(error => console.error('Error loading the product data:', error)); 
 }
 
-// Функція для рендерингу товарів на сторінці
 function renderCarModels(models) {
     const container = document.getElementById('models-container');
-    container.innerHTML = ''; // Очищаємо контейнер перед новим рендером
+    container.innerHTML = '';
 
     models.forEach(model => {
         const card = document.createElement('div');
@@ -57,7 +50,6 @@ function renderCarModels(models) {
     });
 }
 
-// Функція для фільтрації моделей
 function filterCarModels(brand, scale, price) {
     return carModels.filter(model => {
         const matchesBrand = brand ? model.brand === brand : true;
@@ -68,27 +60,23 @@ function filterCarModels(brand, scale, price) {
     });
 }
 
-// Обробники подій для фільтрів
 brandFilter.addEventListener('change', updateFilteredModels);
 scaleFilter.addEventListener('change', updateFilteredModels);
 priceFilter.addEventListener('input', function () {
     updateFilteredModels();
 });
 
-// Функція для оновлення фільтрованих моделей на основі вибору
 function updateFilteredModels() {
     const selectedBrand = brandFilter.value;
     const selectedScale = scaleFilter.value;
     const selectedPrice = priceFilter.value;
 
-    // Оновлюємо відображення значення ціни
     priceValue.textContent = `${selectedPrice}$`;
 
     const filteredModels = filterCarModels(selectedBrand, selectedScale, selectedPrice);
     renderCarModels(filteredModels);
 }
 
-// Функція для додавання товару до корзини
 function addToCart(id) {
     const product = carModels.find(model => model.id === id);
     if (product) {
@@ -99,12 +87,11 @@ function addToCart(id) {
             cart.push({ ...product, quantity: 1 });
         }
         console.log('Товари в корзині:', cart);
-        saveCart(); // Зберігаємо оновлений кошик в localStorage
-        renderCart(); // Оновлюємо відображення кошика
+        saveCart();
+        renderCart();
     }
 }
 
-// Функція для відображення кошика
 function renderCart() {
     const cartSidebar = document.getElementById('cart-sidebar');
     cartSidebar.innerHTML = '<h2 style="text-align: center;">Корзина</h2>';
@@ -114,7 +101,7 @@ function renderCart() {
         cartSidebar.innerHTML += '<p style="text-align: center; font-size: 18px; margin-top: 20px;">Корзина пуста</p>';
     } else {
         cart.forEach(item => {
-            total += item.quantity * item.price;
+            total = total + item.quantity * item.price;
             cartSidebar.innerHTML += `
                 <div style='display: flex; align-items: center; margin-bottom: 15px;'>
                     <img src='${item.image}' alt='${item.name}' style='width: 60px; height: 60px; margin-right: 10px;'>
@@ -133,34 +120,93 @@ function renderCart() {
     }
 }
 
-// Функція для збереження кошика в localStorage
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-// Функція для завантаження кошика з localStorage
 function loadCart() {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
         cart = JSON.parse(savedCart);
-        renderCart(); // Оновлюємо відображення кошика після завантаження
+        renderCart();
     }
 }
 
-// Функція для очищення кошика
 function clearCart() {
     cart = [];
-    saveCart(); // Очищаємо кошик в localStorage
-    renderCart(); // Оновлюємо відображення кошика
+    saveCart();
+    renderCart();
 }
 
-// Додати обробник події на кнопку очищення кошика
 document.addEventListener('DOMContentLoaded', function () {
     const clearCartButton = document.getElementById('clear-cart');
     if (clearCartButton) {
         clearCartButton.addEventListener('click', clearCart);
     }
-    
-    loadCarModels();  // Завантажуємо моделі машин
-    loadCart();  // Завантажуємо кошик
+
+    // ⬇️ Перевірка користувача
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData && userData.username === 'admin') {
+        const addProductBtn = document.createElement('button');
+        addProductBtn.id = 'add-product-btn';
+        addProductBtn.textContent = 'Add Product';
+        addProductBtn.style.margin = '10px';
+        addProductBtn.style.padding = '10px 20px';
+        addProductBtn.style.fontSize = '16px';
+
+        document.body.insertBefore(addProductBtn, document.body.firstChild);
+
+        // Форма (прихована спочатку)
+        const form = document.createElement('form');
+        form.id = 'add-product-form';
+        form.style.display = 'none';
+        form.innerHTML = `
+            <h2>Додати новий товар</h2>
+            <input type="text" id="brandInput" placeholder="Бренд" required><br>
+            <input type="text" id="nameInput" placeholder="Назва моделі" required><br>
+            <input type="text" id="scaleInput" placeholder="Масштаб (наприклад, 1/64)" required><br>
+            <input type="number" id="priceInput" placeholder="Ціна" required><br>
+            <input type="text" id="imageInput" placeholder="URL зображення" required><br>
+            <button type="submit">Зберегти товар</button>
+        `;
+        document.body.insertBefore(form, addProductBtn.nextSibling);
+
+        // Показати/приховати форму
+        addProductBtn.addEventListener('click', function () {
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Обробка сабміту форми
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const newProduct = {
+                id: Date.now(),
+                brand: document.getElementById('brandInput').value,
+                name: document.getElementById('nameInput').value,
+                scale: document.getElementById('scaleInput').value,
+                price: Number(document.getElementById('priceInput').value),
+                image: document.getElementById('imageInput').value
+            };
+
+            // Для перевірки:
+            console.log('Новий товар:', newProduct);
+
+            // Можна додати в базу через API
+            // А поки просто додамо в масив та перемалюємо
+            carModels.push(new CarModel(
+                newProduct.id,
+                newProduct.brand,
+                newProduct.name,
+                newProduct.scale,
+                newProduct.price,
+                newProduct.image
+            ));
+            renderCarModels(carModels);
+            form.reset();
+            form.style.display = 'none';
+        });
+    }
+
+    loadCarModels();
+    loadCart();
 });
