@@ -27,30 +27,9 @@ app.use('/api/admin', adminRoutes);
 mongoose.connect(process.env.MONGO_URI, {})
   .then(() => {
     console.log('Connected to MongoDB');
-    createAdminUser();
   })
   .catch(err => console.error('MongoDB connection error:', err));
 
-async function createAdminUser() {
-  try {
-    const existingAdmin = await User.findOne({ username: 'admin' });
-    if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash('Qq+21212121', 10);
-      const adminUser = new User({
-        username: 'admin',
-        email: 'admin@example.com',
-        password: hashedPassword,
-        role: 'admin',
-      });
-      await adminUser.save();
-      console.log('Admin user created');
-    } else {
-      console.log('Admin user already exists');
-    }
-  } catch (error) {
-    console.error('Error creating admin user:', error);
-  }
-}
 
 app.get('/api/products', async (req, res) => {
   try {

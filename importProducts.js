@@ -10,10 +10,10 @@ mongoose.connect('mongodb://localhost:27017/myshop', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
-  console.log('✅ Підключено до MongoDB');
+  console.log(' Підключено до MongoDB');
   importData();
 }).catch(err => {
-  console.error('❌ Помилка підключення:', err);
+  console.error(' Помилка підключення:', err);
 });
 
 async function importData() {
@@ -25,10 +25,10 @@ async function importData() {
     await Product.deleteMany();
     await Product.insertMany(products); 
 
-    console.log('✅ Дані імпортовано успішно');
+    console.log(' Дані імпортовано успішно');
     process.exit();
   } catch (err) {
-    console.error('❌ Помилка імпорту:', err);
+    console.error('Помилка імпорту:', err);
     process.exit(1);
   }
 }

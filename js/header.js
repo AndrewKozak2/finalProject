@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const userLabel = document.createElement('span');
         userLabel.textContent = `${username}`;
         userLabel.style.marginRight = '10px';
+        userLabel.style.marginLeft = '10px';
 
         const logoutButton = document.createElement('button');
         logoutButton.textContent = 'Log Out';

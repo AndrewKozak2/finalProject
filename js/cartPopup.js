@@ -1,21 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Завантажуємо корзину з localStorage або ініціалізуємо порожній масив
     window.cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Створюємо елемент для кнопки корзини
     const cartButton = document.createElement('span');
     cartButton.textContent = '🛒';
     cartButton.style.fontSize = '24px';
     cartButton.style.cursor = 'pointer';
+    cartButton.style.marginLeft = '10px';
 
-    // Знайдемо контейнер для правих кнопок (реєстрація, вхід)
     const rightContainer = document.querySelector('div[style*="display: flex;"]');
-    
     if (rightContainer) {
         rightContainer.appendChild(cartButton);
     } else {
-
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const rightContainer = document.querySelector('div[style*="display: flex;"]');
             if (rightContainer) {
                 rightContainer.appendChild(cartButton);
@@ -35,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cartSidebar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
     cartSidebar.style.padding = '20px';
     cartSidebar.style.overflowY = 'auto';
-    cartSidebar.style.transition = 'right 0.3s ease-in-out, opacity 0.3s ease-in-out';
+    cartSidebar.style.transition = 'right 0.3s ease-in-out';
     cartSidebar.style.fontFamily = 'Arial, sans-serif';
     cartSidebar.style.color = '#333';
     cartSidebar.style.borderRadius = '10px';
@@ -61,16 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cartSidebar.style.right = '-400px';
     });
 
-    fetch('data/products.json')
-        .then(response => response.json())
-        .then(data => {
-            products = data;
-            console.log('Products loaded:', products);
-        })
-        .catch(error => console.error('Error loading products:', error));
-
-    // Глобальна функція для рендеру корзини
-    window.renderCart = function() {
+    window.renderCart = function () {
         cartSidebar.innerHTML = '<h2 style="text-align: center;">Корзина</h2>';
         let total = 0;
 
@@ -90,8 +77,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         <p style='margin: 5px 0; color: #555;'>Бренд: ${item.brand}</p>
                         <p style='margin: 5px 0; color: #555;'>Масштаб: ${item.scale}</p>
                         <p style='margin: 5px 0; font-weight: bold;'>Ціна: $${item.price}</p>
-                        <input type='number' min='1' value='${item.quantity}' style='width: 50px; padding: 5px; margin-top: 5px; border-radius: 5px; border: 1px solid #ddd;' onchange='updateQuantity(${item.id}, this.value)' />
-                        <button onclick='removeFromCart(${item.id})' style='margin-left: 10px; background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; transition: background-color 0.2s;'>Видалити</button>
+                        <input type='number' min='1' value='${item.quantity}' 
+                            style='width: 50px; padding: 5px; margin-top: 5px; border-radius: 5px; border: 1px solid #ddd;' 
+                            onchange='updateQuantity("${item.id}", this.value)' />
+                        <button onclick='removeFromCart("${item.id}")' 
+                            style='margin-left: 10px; background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px;'>Видалити</button>
                     </div>
                 </div>
             `;
@@ -111,28 +101,26 @@ document.addEventListener('DOMContentLoaded', function () {
         orderButton.addEventListener('click', function () {
             alert('Ваше замовлення прийнято!');
             cart = [];
-            localStorage.setItem('cart', JSON.stringify(cart));  // Оновлюємо localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
             renderCart();
         });
 
         cartSidebar.appendChild(orderButton);
         cartSidebar.appendChild(closeButton);
-    }
+    };
 
-    // Функція для оновлення кількості товару в кошику
-    window.updateQuantity = function(id, quantity) {
+    window.updateQuantity = function (id, quantity) {
         const item = cart.find(item => item.id === id);
         if (item && quantity > 0) {
             item.quantity = parseInt(quantity, 10);
-            localStorage.setItem('cart', JSON.stringify(cart));  // Оновлюємо localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
             renderCart();
         }
-    }
+    };
 
-    // Функція для видалення товару з кошика
-    window.removeFromCart = function(id) {
+    window.removeFromCart = function (id) {
         cart = cart.filter(item => item.id !== id);
-        localStorage.setItem('cart', JSON.stringify(cart));  // Оновлюємо localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
         renderCart();
-    }
+    };
 });
