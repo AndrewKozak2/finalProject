@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            const response = await fetch('https://truescale-backend.onrender.com/register', {
+            const response = await fetch('https://truescale-backend.onrender.com/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
