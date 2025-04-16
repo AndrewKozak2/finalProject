@@ -21,7 +21,7 @@ function verifyAdmin(req, res, next) {
       return res.status(403).json({ message: 'Доступ дозволено лише адміністраторам' });
     }
 
-    req.user = decoded; // додаємо інфо про користувача в запит
+    req.user = decoded; 
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Недійсний або прострочений токен' });

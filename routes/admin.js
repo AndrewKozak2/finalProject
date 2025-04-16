@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
-const { verifyAdmin } = require('../middlewares/auth'); // ✅ підключення нового файлу
+const { verifyAdmin } = require('../middlewares/auth');
 
-// ➕ Додавання нового продукту (admin only)
+
 router.post('/products', verifyAdmin, async (req, res) => {
   try {
     const { name, brand, price, scale, image, inStock } = req.body;
@@ -24,7 +24,7 @@ router.post('/products', verifyAdmin, async (req, res) => {
   }
 });
 
-// ✏️ Редагування продукту (admin only)
+
 router.put('/products/:id', verifyAdmin, async (req, res) => {
   try {
     const { id } = req.params;

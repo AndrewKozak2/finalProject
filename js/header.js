@@ -2,9 +2,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const headerContainer = document.createElement('div');
     headerContainer.classList.add('header-container');
 
-    // 🔹 ЛОГОТИП
+    
     const logo = document.createElement('img');
-    logo.src = 'images/logo.png'; // 👈 впевнись, що файл збережено за цим шляхом
+    logo.src = 'images/logo.png'; 
     logo.alt = 'TrueScale Logo';
     logo.classList.add('header-logo');
     logo.addEventListener('click', () => {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Додаємо логотип зліва, кнопки справа
+   
     headerContainer.appendChild(logo);
     headerContainer.appendChild(rightContainer);
     document.body.insertBefore(headerContainer, document.body.firstChild);

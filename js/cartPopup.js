@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     cartButton.alt = 'Cart';
     cartButton.classList.add('cart-icon-img');
 
-    // Wait for .header-right and append the cart button there
     function waitForElement(selector, callback) {
         const check = setInterval(() => {
             const element = document.querySelector(selector);

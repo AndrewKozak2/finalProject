@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearCartButton.addEventListener('click', clearCart);
     }
 
-    // Модальне вікно
+    // Модалка
     const modal = document.createElement('div');
     modal.id = 'productModal';
     modal.style.display = 'none';
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/api/admin/products', {
+            const response = await fetch('https://truescale-backend.onrender.com/api/admin/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
