@@ -22,22 +22,40 @@ function loadCarModels() {
     fetch('http://localhost:3000/api/products')
         .then(response => response.json())
         .then(data => {
-            carModels = data.products.map(model =>
+            carModels = data.map(model =>
                 new CarModel(model._id, model.brand, model.name, model.scale, model.price, model.image)
             );
+            populateBrandFilter();
             renderCarModels(carModels);
         })
         .catch(error => console.error('Error loading product data:', error));
 }
 
-function renderCarModels(models) {
-    const container = document.getElementById('models-container');
-    container.innerHTML = '';
+function populateBrandFilter() {
+    const brands = [...new Set(carModels.map(model => model.brand))];
+    const desiredOrder = [
+        "MiniGT",
+        "Kaido House",
+        "INNO64",
+        "Tarmac Works",
+        "CM Model",
+        "Time Micro"
+    ];
+    const orderedBrands = desiredOrder.filter(brand => brands.includes(brand));
+    brandFilter.innerHTML = '<option value="">All</option>';
+    orderedBrands.forEach(brand => {
+        const option = document.createElement('option');
+        option.value = brand;
+        option.textContent = brand;
+        brandFilter.appendChild(option);
+    });
+}
 
+function renderCarModels(models) {
+    modelsContainer.innerHTML = '';
     models.forEach(model => {
         const card = document.createElement('div');
         card.classList.add('card');
-
         card.innerHTML = `
             <img src="${model.image}" alt="${model.name}">
             <h3>${model.brand} ${model.name}</h3>
@@ -45,8 +63,7 @@ function renderCarModels(models) {
             <p>Price: $${model.price}</p>
             <button onclick="addToCart('${model.id}')">Add to Cart</button>
         `;
-
-        container.appendChild(card);
+        modelsContainer.appendChild(card);
     });
 }
 
@@ -68,7 +85,6 @@ function updateFilteredModels() {
     const selectedScale = scaleFilter.value;
     const selectedPrice = priceFilter.value;
     priceValue.textContent = `${selectedPrice}$`;
-
     const filteredModels = filterCarModels(selectedBrand, selectedScale, selectedPrice);
     renderCarModels(filteredModels);
 }
@@ -89,11 +105,10 @@ function addToCart(id) {
 
 function renderCart() {
     const cartSidebar = document.getElementById('cart-sidebar');
-    cartSidebar.innerHTML = '<h2 style="text-align: center;">Корзина</h2>';
-
+    cartSidebar.innerHTML = '<h2 style="text-align: center;">Cart</h2>';
     let total = 0;
     if (cart.length === 0) {
-        cartSidebar.innerHTML += '<p style="text-align: center;">Корзина пуста</p>';
+        cartSidebar.innerHTML += '<p style="text-align: center;">Cart is empty</p>';
     } else {
         cart.forEach(item => {
             total += item.quantity * item.price;
@@ -102,21 +117,45 @@ function renderCart() {
                     <img src="${item.image}" style="width: 60px; margin-right: 10px;">
                     <div>
                         <h4>${item.name}</h4>
-                        <p>Бренд: ${item.brand}</p>
-                        <p>Масштаб: ${item.scale}</p>
-                        <p>Ціна: $${item.price}</p>
-                        <p>Кількість: ${item.quantity}</p>
+                        <p>Brand: ${item.brand}</p>
+                        <p>Scale: ${item.scale}</p>
+                        <p>Price: $${item.price}</p>
+                        <p>Quantity: ${item.quantity}</p>
                     </div>
                 </div>
             `;
         });
-        cartSidebar.innerHTML += `<h3>Загальна сума: $${total}</h3>`;
+        cartSidebar.innerHTML += `<h3>Total: $${total}</h3>`;
     }
+}
+
+function loadNewArrivals() {
+    fetch('http://localhost:3000/api/products/latest')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('new-arrivals-container');
+            container.innerHTML = '';
+            data.forEach(model => {
+                const card = document.createElement('div');
+                card.classList.add('new-arrival-card');
+                card.innerHTML = `
+                    <img src="${model.image}" alt="${model.name}">
+                    <h3>${model.brand} ${model.name}</h3>
+                    <p>Scale: ${model.scale}</p>
+                    <p>Price: $${model.price}</p>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching latest products:', error);
+        });
 }
 
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
+
 function loadCart() {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -124,6 +163,7 @@ function loadCart() {
         renderCart();
     }
 }
+
 function clearCart() {
     cart = [];
     saveCart();
@@ -131,12 +171,14 @@ function clearCart() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+
+
     const clearCartButton = document.getElementById('clear-cart');
     if (clearCartButton) {
         clearCartButton.addEventListener('click', clearCart);
     }
 
-    // 🔶 Створення модального вікна для додавання продукту
+    // Модальне вікно
     const modal = document.createElement('div');
     modal.id = 'productModal';
     modal.style.display = 'none';
@@ -145,34 +187,73 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.style.left = '0';
     modal.style.width = '100vw';
     modal.style.height = '100vh';
-    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
     modal.style.justifyContent = 'center';
     modal.style.alignItems = 'center';
     modal.style.zIndex = '9999';
 
     const content = document.createElement('div');
-    content.style.backgroundColor = '#fff';
-    content.style.padding = '30px';
-    content.style.borderRadius = '12px';
+    content.style.backgroundColor = '#1f1f1f';
+    content.style.padding = '40px';
+    content.style.borderRadius = '16px';
     content.style.width = '400px';
-    content.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+    content.style.color = '#fff';
+    content.style.position = 'relative';
+    content.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.4)';
+    content.style.fontFamily = 'Poppins, sans-serif';
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '✖';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '12px';
+    closeButton.style.right = '16px';
+    closeButton.style.background = 'none';
+    closeButton.style.border = 'none';
+    closeButton.style.color = '#fff';
+    closeButton.style.fontSize = '20px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+    });
+
     content.innerHTML = `
-        <h2 style="text-align:center;">Додати товар</h2>
+        <h2 style="text-align:center; margin-bottom: 20px;">Add Product</h2>
         <form id="add-product-form">
-            <input id="brandInput" placeholder="Бренд" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
-            <input id="nameInput" placeholder="Назва моделі" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
-            <input id="scaleInput" placeholder="Масштаб (1/64)" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
-            <input type="number" id="priceInput" placeholder="Ціна" required style="width:100%; margin: 5px 0; padding: 10px;"><br>
-            <input type="file" id="imageInput" accept="image/*" style="margin: 5px 0;"><br>
-            <img id="preview" src="" style="display:none; width: 100%; margin-top: 10px;"><br>
-            <button type="submit" style="margin-top: 10px; padding: 10px 20px; background:#007bff; color:white; border:none; border-radius:5px;">Зберегти</button>
+            <input id="brandInput" placeholder="Brand" required style="width:100%; margin-bottom: 10px; padding: 10px; border-radius: 8px; border: none;"><br>
+            <input id="nameInput" placeholder="Model name" required style="width:100%; margin-bottom: 10px; padding: 10px; border-radius: 8px; border: none;"><br>
+            <input id="scaleInput" placeholder="Scale (1/64)" required style="width:100%; margin-bottom: 10px; padding: 10px; border-radius: 8px; border: none;"><br>
+            <input type="number" id="priceInput" placeholder="Price" required style="width:100%; margin-bottom: 10px; padding: 10px; border-radius: 8px; border: none;"><br>
+            <div style="position: relative; margin-bottom: 10px;">
+                <label for="imageInput" style="
+                    display: inline-block;
+                    background-color: #007bff;
+                    color: white;
+                    padding: 6px 12px;
+                    font-size: 14px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                ">Choose File</label>
+                <input type="file" id="imageInput" accept="image/*" style="
+                    opacity: 0;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+                ">
+            </div>
+            <img id="preview" src="" style="display:none; width: 100%; border-radius: 8px; margin-bottom: 10px;"><br>
+            <button type="submit" style="margin-top: 10px; padding: 12px; width: 100%; background:#007bff; color:white; border:none; border-radius:8px; font-weight: 600; cursor:pointer;">Save</button>
         </form>
     `;
 
+    content.appendChild(closeButton);
     modal.appendChild(content);
     document.body.appendChild(modal);
 
-    // 🖼 Прев'ю картинки
     let base64Image = '';
     const imageInput = content.querySelector('#imageInput');
     const preview = content.querySelector('#preview');
@@ -190,12 +271,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 📤 Надсилання форми
     const form = content.querySelector('#add-product-form');
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
         const token = localStorage.getItem('token');
-
         const productData = {
             brand: document.getElementById('brandInput').value,
             name: document.getElementById('nameInput').value,
@@ -210,30 +289,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
-                  },
+                },
                 body: JSON.stringify(productData)
             });
 
             const result = await response.json();
             if (response.ok) {
-                alert('Товар додано!');
+                alert('Product added!');
                 form.reset();
                 preview.style.display = 'none';
                 modal.style.display = 'none';
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
                 loadCarModels();
+                loadNewArrivals();
             } else {
-                alert(result.message || 'Помилка додавання товару');
+                alert(result.message || 'Error adding product');
             }
         } catch (err) {
-            console.error('Помилка:', err);
+            console.error('Error:', err);
         }
     });
 
-    // 📌 Глобальна функція — активується з header.js
     window.showAddProductForm = function () {
-        modal.style.display = 'flex';
+        if (modal.style.display !== 'flex') {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        }
     };
 
     loadCarModels();
     loadCart();
+    loadNewArrivals();
 });

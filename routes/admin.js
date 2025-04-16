@@ -1,30 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const { verifyAdmin } = require('../middlewares/auth'); // ✅ підключення нового файлу
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
-
-function verifyAdmin(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ message: 'Немає токена' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    console.log('Decoded token:', decoded); 
-    if (decoded.role !== 'admin') {
-      return res.status(403).json({ message: 'Доступ заборонено' });
-    }
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(401).json({ message: 'Недійсний токен' });
-  }
-}
-
+// ➕ Додавання нового продукту (admin only)
 router.post('/products', verifyAdmin, async (req, res) => {
   try {
     const { name, brand, price, scale, image, inStock } = req.body;
@@ -45,6 +24,7 @@ router.post('/products', verifyAdmin, async (req, res) => {
   }
 });
 
+// ✏️ Редагування продукту (admin only)
 router.put('/products/:id', verifyAdmin, async (req, res) => {
   try {
     const { id } = req.params;

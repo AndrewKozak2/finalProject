@@ -1,24 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
     const headerContainer = document.createElement('div');
-    headerContainer.style.display = 'flex';
-    headerContainer.style.alignItems = 'center';
-    headerContainer.style.justifyContent = 'space-between';
-    headerContainer.style.padding = '20px 40px';
-    headerContainer.style.backgroundColor = '#f5f5f5';
-    headerContainer.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+    headerContainer.classList.add('header-container');
 
-    const title = document.createElement('h1');
-    title.textContent = 'Welcome to TrueScale';
-    title.style.margin = '0';
-    title.style.fontSize = '28px';
-    title.style.flex = '1';
-    title.style.textAlign = 'center';
-    title.style.color = '#333';
+    // 🔹 ЛОГОТИП
+    const logo = document.createElement('img');
+    logo.src = 'images/logo.png'; // 👈 впевнись, що файл збережено за цим шляхом
+    logo.alt = 'TrueScale Logo';
+    logo.classList.add('header-logo');
+    logo.addEventListener('click', () => {
+        window.location.href = 'index.html'; 
+    });
 
     const rightContainer = document.createElement('div');
-    rightContainer.style.display = 'flex';
-    rightContainer.style.alignItems = 'center';
-    rightContainer.style.gap = '10px';
+    rightContainer.classList.add('header-right');
 
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
@@ -27,30 +21,36 @@ document.addEventListener('DOMContentLoaded', function () {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const role = payload.role;
 
-      
         if (role === 'admin') {
             const addProductButton = document.createElement('button');
             addProductButton.textContent = 'Add Product';
-            styleButton(addProductButton);
+            addProductButton.classList.add('header-btn');
             rightContainer.appendChild(addProductButton);
 
             addProductButton.addEventListener('click', function () {
                 if (typeof window.showAddProductForm === 'function') {
-                    window.showAddProductForm(); // Викликає функцію з app.js
+                    window.showAddProductForm();
                 } else {
-                    console.warn('Форма ще не завантажена');
+                    console.warn('Add product form is not loaded yet');
                 }
             });
         }
 
+        const aboutButton = document.createElement('button');
+        aboutButton.textContent = 'About Us';
+        aboutButton.classList.add('header-btn');
+        aboutButton.addEventListener('click', function () {
+        window.location.href = '/about.html';
+        });
+        rightContainer.appendChild(aboutButton);    
+
         const userLabel = document.createElement('span');
         userLabel.textContent = `${username}`;
-        userLabel.style.marginRight = '10px';
-        userLabel.style.marginLeft = '10px';
+        userLabel.classList.add('user-label');
 
         const logoutButton = document.createElement('button');
         logoutButton.textContent = 'Log Out';
-        styleButton(logoutButton);
+        logoutButton.classList.add('header-btn');
 
         rightContainer.appendChild(userLabel);
         rightContainer.appendChild(logoutButton);
@@ -59,16 +59,24 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('role');
-            window.location.href = '/';
+            window.location.href = '/index.html';
         });
     } else {
         const registerButton = document.createElement('button');
-        registerButton.textContent = 'Реєстрація';
-        styleButton(registerButton);
+        registerButton.textContent = 'Register';
+        registerButton.classList.add('header-btn');
 
         const loginButton = document.createElement('button');
-        loginButton.textContent = 'Увійти';
-        styleButton(loginButton);
+        loginButton.textContent = 'Login';
+        loginButton.classList.add('header-btn');
+
+        const aboutButton = document.createElement('button');
+        aboutButton.textContent = 'About Us';
+        aboutButton.classList.add('header-btn');
+        aboutButton.addEventListener('click', function () {
+        window.location.href = '/about.html';
+        });
+        rightContainer.appendChild(aboutButton);
 
         rightContainer.appendChild(registerButton);
         rightContainer.appendChild(loginButton);
@@ -82,24 +90,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    headerContainer.appendChild(title);
+    // Додаємо логотип зліва, кнопки справа
+    headerContainer.appendChild(logo);
     headerContainer.appendChild(rightContainer);
     document.body.insertBefore(headerContainer, document.body.firstChild);
-
-    function styleButton(button) {
-        button.style.padding = '8px 16px';
-        button.style.border = 'none';
-        button.style.borderRadius = '6px';
-        button.style.backgroundColor = '#007bff';
-        button.style.color = '#fff';
-        button.style.cursor = 'pointer';
-        button.style.fontWeight = 'bold';
-        button.style.transition = 'background-color 0.3s ease';
-        button.onmouseover = function () {
-            button.style.backgroundColor = '#0056b3';
-        };
-        button.onmouseout = function () {
-            button.style.backgroundColor = '#007bff';
-        };
-    }
 });

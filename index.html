@@ -1,40 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>TrueScale</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="icon" href="images/gt2rs.png" type="image/x-icon">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>TrueScale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <link rel="icon" href="images/gt2rs.png" type="image/x-icon" />
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <h2>Filters</h2>
-            <label for="brandFilter">Brand:</label>
-            <select id="brandFilter">
-                <option value="">All</option>
-                <option value="MiniGT">MiniGT</option>
-                <option value="INNO64">INNO64</option>
-                <option value="Tarmac Works">Tarmac Works</option>
-            </select>
-            <label for="scaleFilter">Scale:</label>
-            <select id="scaleFilter">
-                <option value="">All</option>
-                <option value="1/64">1/64</option>
-            </select>
-            <label for="priceFilter">Price:</label>
-            <input type="range" id="priceFilter" min="1" max="100" value="100">
-            <p id="priceValue">100$</p>
+
+  <!-- ✅ HERO поза контейнером -->
+  <section class="hero">
+    <div class="hero-overlay">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <h1>Realistic Car Models</h1>
+          <p>New arrivals of scale models at TrueScale</p>
+          <div class="hero-buttons">
+            <a href="#models-container" class="hero-btn primary">Shop now</a>
+            <a href="#" class="hero-btn secondary">Find more</a>
+          </div>
         </div>
-        <div class="main-content">
-    <div id="models-container"></div>
+      </div>
     </div>
+  </section>
+  
+  <!-- ✅ BRAND LOGOS SECTION вставка -->
+  <section class="brand-slider">
+    <div class="slider-wrapper">
+      <!-- Ліва стрілка -->
+      <div class="swiper-button-prev"></div>
+  
+      <!-- Слайдер -->
+      <div class="swiper brandSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide"><img src="images/logos/brand-minigt.png" alt="MiniGT" /></div>
+          <div class="swiper-slide"><img src="images/logos/brand-kaido.png" alt="Kaido" /></div>
+          <div class="swiper-slide"><img src="images/logos/brand-tarmac.png" alt="Tarmac" /></div>
+          <div class="swiper-slide"><img src="images/logos/brand-inno64.png" alt="INNO64" /></div>
+          <div class="swiper-slide"><img src="images/logos/brand-timemicro.png" alt="Timemicro" /></div>
+          <div class="swiper-slide"><img src="images/logos/brand-cmmodel.png" alt="CM Model" /></div>
+        </div>
+      </div>
+  
+      <!-- Права стрілка -->
+      <div class="swiper-button-next"></div>
     </div>
-    <script src="js/cartPopup.js"></script>
-    <script type="module" src="js/header.js"></script>
-    <script src="js/app.js"></script>
+  </section>
+
+  <section class="new-arrivals-section">
+    <h2 class="section-title">New Arrivals</h2>
+    <div class="new-arrivals-container" id="new-arrivals-container">
+      <!-- JS додає нові моделі -->
+    </div>
+  </section>
+
+  <!-- 🔽 Тепер контейнер -->
+  <div class="container">
+    <div class="sidebar">
+      <h2>Filters</h2>
+      <label for="brandFilter">Brand:</label>
+      <select id="brandFilter">
+      </select>
+      <label for="scaleFilter">Scale:</label>
+      <select id="scaleFilter">
+        <option value="">All</option>
+        <option value="1/64">1/64</option>
+      </select>
+      <label for="priceFilter">Price:</label>
+      <input type="range" id="priceFilter" min="1" max="100" value="100" />
+      <p id="priceValue">100$</p>
+    </div>
+
+    <div class="main-content">
+      <div id="models-container"></div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="js/cartPopup.js"></script>
+  <script type="module" src="js/header.js"></script>
+  <script src="js/app.js"></script>
+  <script type="module" src="js/brandSlider.js"></script>
 </body>
 </html>

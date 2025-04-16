@@ -39,6 +39,14 @@ app.get('/api/products', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 });
+app.get('/api/products/latest', async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 }).limit(3);
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch latest products' });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

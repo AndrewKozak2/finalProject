@@ -12,12 +12,12 @@ router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).json({ message: 'Будь ласка, заповніть усі поля' });
+      return res.status(400).json({ message: 'Please fill in all fields' });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'Користувач з такою поштою вже існує' });
+      return res.status(400).json({ message: 'A user with this email already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,10 +30,10 @@ router.post('/register', async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: 'Користувач зареєстрований успішно' });
+    res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
-    console.error('Помилка при реєстрації:', error);
-    res.status(500).json({ message: 'Помилка сервера. Спробуйте пізніше.' });
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 });
 
@@ -42,17 +42,17 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'Будь ласка, введіть email і пароль' });
+      return res.status(400).json({ message: 'Please enter email and password' });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Неправильний email або пароль' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'Неправильний email або пароль' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const token = jwt.sign(
@@ -63,8 +63,8 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, username: user.username, role: user.role });
   } catch (error) {
-    console.error('Помилка при логіні:', error);
-    res.status(500).json({ message: 'Помилка сервера. Спробуйте пізніше.' });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 });
 
