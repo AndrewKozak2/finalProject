@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 messageContainer.style.color = 'green';
                 localStorage.setItem('username', username);
                 setTimeout(function () {
-                    window.location.href = '/login.html';
+                    window.location.href = 'https://andrewkozak2.github.io/finalProject/login.html';
                 }, 2000);
             } else {
                 messageContainer.textContent = data.message || 'Registration error';

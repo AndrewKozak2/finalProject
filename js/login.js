@@ -63,7 +63,7 @@ window.addEventListener('load', function () {
                 localStorage.setItem('username', data.username);
                 localStorage.setItem('role', data.role);
                 setTimeout(() => {
-                    window.location.href = '/index.html';
+                    window.location.href = 'https://andrewkozak2.github.io/finalProject/index.html';
                 }, 2000);
             } else {
                 messageContainer.textContent = data.message || 'Login error';
