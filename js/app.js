@@ -19,7 +19,7 @@ const priceValue = document.getElementById('priceValue');
 const modelsContainer = document.getElementById('models-container');
 
 function loadCarModels() {
-    fetch('http://localhost:3000/api/products')
+    fetch('https://truescale-backend.onrender.com/api/products')
         .then(response => response.json())
         .then(data => {
             carModels = data.map(model =>
@@ -130,7 +130,7 @@ function renderCart() {
 }
 
 function loadNewArrivals() {
-    fetch('http://localhost:3000/api/products/latest')
+    fetch('https://truescale-backend.onrender.com/api/products/latest')
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('new-arrivals-container');
