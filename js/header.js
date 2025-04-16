@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         aboutButton.textContent = 'About Us';
         aboutButton.classList.add('header-btn');
         aboutButton.addEventListener('click', function () {
-        window.location.href = '/about.html';
+        window.location.href = 'https://andrewkozak2.github.io/finalProject/about.html';
         });
         rightContainer.appendChild(aboutButton);    
 
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             localStorage.removeItem('role');
-            window.location.href = '/index.html';
+            window.location.href = 'https://andrewkozak2.github.io/finalProject/index.html';
         });
     } else {
         const registerButton = document.createElement('button');
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
         aboutButton.textContent = 'About Us';
         aboutButton.classList.add('header-btn');
         aboutButton.addEventListener('click', function () {
-        window.location.href = '/about.html';
+        window.location.href = 'https://andrewkozak2.github.io/finalProject/about.html';
         });
         rightContainer.appendChild(aboutButton);
 
@@ -82,11 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
         rightContainer.appendChild(loginButton);
 
         registerButton.addEventListener('click', function () {
-            window.location.href = '/registration.html';
+            window.location.href = 'https://andrewkozak2.github.io/finalProject/registration.html';
         });
 
         loginButton.addEventListener('click', function () {
-            window.location.href = '/login.html';
+            window.location.href = 'https://andrewkozak2.github.io/finalProject/login.html';
         });
     }
 
