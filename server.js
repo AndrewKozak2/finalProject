@@ -15,10 +15,10 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use('/api', productRoutes);
 console.log('Registering auth routes...');
-app.use('/api', authRoutes);
+app.use('/api', authRoutes);    
 app.use('/api/admin', adminRoutes);
+app.use('/api', productRoutes);       
 
 mongoose.connect(process.env.MONGO_URI, {})
   .then(() => {

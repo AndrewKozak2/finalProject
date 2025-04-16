@@ -1,10 +1,9 @@
-// middlewares/auth.js
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
 
-// 🔐 Перевірка чи користувач — адміністратор
+
 function verifyAdmin(req, res, next) {
   const authHeader = req.headers.authorization;
 
