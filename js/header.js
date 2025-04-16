@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     logo.alt = 'TrueScale Logo';
     logo.classList.add('header-logo');
     logo.addEventListener('click', () => {
-        window.location.href = 'index.html'; 
+        window.location.href = '/index.html'; 
     });
 
     const rightContainer = document.createElement('div');
