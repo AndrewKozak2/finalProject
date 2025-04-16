@@ -12,8 +12,6 @@
   <link rel="icon" href="images/gt2rs.png" type="image/x-icon" />
 </head>
 <body>
-
-  <!-- ✅ HERO поза контейнером -->
   <section class="hero">
     <div class="hero-overlay">
       <div class="hero-inner">
@@ -29,13 +27,9 @@
     </div>
   </section>
   
-  <!-- ✅ BRAND LOGOS SECTION вставка -->
   <section class="brand-slider">
     <div class="slider-wrapper">
-      <!-- Ліва стрілка -->
       <div class="swiper-button-prev"></div>
-  
-      <!-- Слайдер -->
       <div class="swiper brandSwiper">
         <div class="swiper-wrapper">
           <div class="swiper-slide"><img src="images/logos/brand-minigt.png" alt="MiniGT" /></div>
@@ -46,8 +40,6 @@
           <div class="swiper-slide"><img src="images/logos/brand-cmmodel.png" alt="CM Model" /></div>
         </div>
       </div>
-  
-      <!-- Права стрілка -->
       <div class="swiper-button-next"></div>
     </div>
   </section>
@@ -55,11 +47,10 @@
   <section class="new-arrivals-section">
     <h2 class="section-title">New Arrivals</h2>
     <div class="new-arrivals-container" id="new-arrivals-container">
-      <!-- JS додає нові моделі -->
     </div>
   </section>
 
-  <!-- 🔽 Тепер контейнер -->
+
   <div class="container">
     <div class="sidebar">
       <h2>Filters</h2>
@@ -75,13 +66,11 @@
       <input type="range" id="priceFilter" min="1" max="100" value="100" />
       <p id="priceValue">100$</p>
     </div>
-
     <div class="main-content">
       <div id="models-container"></div>
     </div>
   </div>
 
-  <!-- JS -->
   <script src="js/cartPopup.js"></script>
   <script type="module" src="js/header.js"></script>
   <script src="js/app.js"></script>

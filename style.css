@@ -129,14 +129,14 @@
     width: 32px;
     height: 32px;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.1); /* світлий фон */
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 6px;
     padding: 4px;
   }
   .cart-icon-img:hover {
     transform: scale(1.1);
   }
-/* 🔹 Фільтри (sidebar) */
+
 .sidebar {
     width: 250px;
     background-color: #ffffff;
@@ -239,7 +239,6 @@
     margin: 4px 0;
   }
   
-  /* 🔹 Кнопка "Add to cart" */
   .card button {
     margin-top: 12px;
     padding: 10px;
@@ -427,7 +426,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 40px;
-    background: rgba(0, 0, 0, 0.1); /* світліший прозорий фон */
+    background: rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     z-index: 10;
@@ -472,9 +471,7 @@
   .header-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
-  
-  
-/* ===== About Us Page Styles ===== */
+
 
 .about-hero-section {
     height: 60vh;
@@ -594,7 +591,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: 0 30px; /* Додає простір між логотипами і стрілками */
+    padding: 0 30px; 
   }
   
   .brandSwiper {
@@ -603,7 +600,7 @@
   }
   
   .swiper-slide {
-    height: 130px; /* 📏 або будь-яка потрібна висота */
+    height: 130px; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -625,7 +622,6 @@
     margin: auto;
   }
   
-  /* Стрілки */
   .swiper-button-prev,
   .swiper-button-next {
     width: 32px;
@@ -657,7 +653,6 @@
     right: 0;
   }
   
-  /* Приховує дефолтні стрілки */
   .swiper-button-prev::after,
   .swiper-button-next::after {
     display: none;
